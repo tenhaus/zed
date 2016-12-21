@@ -11,6 +11,13 @@ type CompressedData struct {
 
 // Layer ...
 type Layer struct {
+	Processors  []Processor
+	PointLength int
+	Rows        []Row
+}
+
+// Row ...
+type Row struct {
 	Processors []Processor
 }
 
@@ -32,6 +39,16 @@ func Spin(layer *Layer) {
 	// fmt.Println(layer)
 }
 
+// GetPoint ...
+func GetPoint(x int, y int) (byte, byte) {
+	return 0x00, 0x00
+}
+
+// GetGridSize ...
+func GetGridSize(pointLength int, processorLength int) (int, int) {
+	return pointLength * processorLength, pointLength * processorLength
+}
+
 // GetLayerSize is probably a useless function because
 // we can just len(layer.Processors) after partitioning
 func GetLayerSize(data []byte, pointLength int) uint {
@@ -43,6 +60,7 @@ func GetLayerSize(data []byte, pointLength int) uint {
 
 // Partition ...
 func Partition(data []byte, layer *Layer, pointLength int) {
+	layer.PointLength = pointLength
 	length := len(data)
 	index := 0
 
@@ -82,6 +100,13 @@ func Partition(data []byte, layer *Layer, pointLength int) {
 		GenerateEmptyProcessor(&nullProcessor, pointLength)
 		layer.Processors = append(layer.Processors, nullProcessor)
 	}
+
+	GenerateRows(layer)
+}
+
+// GenerateRows tries to generate an even cube of processors
+func GenerateRows(layer *Layer) {
+	numProcessors := len(layer.Processors)
 }
 
 // GenerateEmptyProcessor ...
