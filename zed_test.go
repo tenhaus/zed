@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"testing"
 )
@@ -33,12 +34,13 @@ func TestFill(t *testing.T) {
 	}
 }
 
-func TestPartitionsAreEven(t *testing.T) {
-	file, _ := ioutil.ReadFile("files/5partitions.txt")
+func TestPartitionsAreOdd(t *testing.T) {
+	file, _ := ioutil.ReadFile("files/20chars.txt")
 	var layer Layer
 	Partition(file, &layer, 6)
 
-	if len(layer.Processors) != 6 {
+	fmt.Println(layer.Processors)
+	if len(layer.Processors) != 5 {
 		t.Fail()
 	}
 }

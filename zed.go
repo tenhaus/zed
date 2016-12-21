@@ -74,7 +74,8 @@ func Partition(data []byte, layer *Layer, pointLength int) {
 	numProcessors := len(layer.Processors)
 	remainder := math.Mod(float64(numProcessors), 2.0)
 
-	if remainder >= 1.0 {
+	// Make sure we have an odd number of processors
+	if remainder == 0 {
 		var nullProcessor Processor
 		GenerateEmptyProcessor(&nullProcessor, pointLength)
 		layer.Processors = append(layer.Processors, nullProcessor)
