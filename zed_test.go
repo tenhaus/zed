@@ -33,6 +33,16 @@ func TestFill(t *testing.T) {
 	}
 }
 
+func TestPartitionsAreEven(t *testing.T) {
+	file, _ := ioutil.ReadFile("files/5partitions.txt")
+	var layer Layer
+	Partition(file, &layer, 6)
+
+	if len(layer.Processors) != 6 {
+		t.Fail()
+	}
+}
+
 func TestGetLayerSize(t *testing.T) {
 	file, _ := ioutil.ReadFile("files/20chars.txt")
 	layerSize := GetLayerSize(file, 6)

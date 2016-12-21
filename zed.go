@@ -1,9 +1,6 @@
 package main
 
-import (
-	"fmt"
-	"math"
-)
+import "math"
 
 // CompressedData ...
 type CompressedData struct {
@@ -31,7 +28,7 @@ func Compress(data []byte) {
 
 // Spin ...
 func Spin(layer *Layer) {
-	fmt.Println(layer)
+	// fmt.Println(layer)
 }
 
 // GetLayerSize is probably a useless function because
@@ -44,14 +41,14 @@ func GetLayerSize(data []byte, pointLength int) uint {
 }
 
 // Partition ...
-func Partition(data []byte, layer *Layer, points int) {
+func Partition(data []byte, layer *Layer, pointLength int) {
 	length := len(data)
 	index := 0
 
 	for {
 
 		// Break if we're done
-		if index*points >= length {
+		if index*pointLength >= length {
 			break
 		}
 
@@ -59,12 +56,12 @@ func Partition(data []byte, layer *Layer, points int) {
 		var processor Processor
 
 		// Take a chunk
-		if (index*points)+points > length {
+		if (index*pointLength)+pointLength > length {
 			// Fill with the remaining data
-			processor.Points = data[index*points : length]
-			FillPartialProcessor(&processor, points)
+			processor.Points = data[index*pointLength : length]
+			FillPartialProcessor(&processor, pointLength)
 		} else {
-			processor.Points = data[index*points : (index*points)+points]
+			processor.Points = data[index*pointLength : (index*pointLength)+pointLength]
 		}
 
 		// Add to the stack
@@ -72,6 +69,22 @@ func Partition(data []byte, layer *Layer, points int) {
 
 		// Continue
 		index++
+	}
+
+	numProcessors := len(layer.Processors)
+	remainder := math.Mod(float64(numProcessors), 2.0)
+
+	if remainder >= 1.0 {
+		var nullProcessor Processor
+		GenerateEmptyProcessor(&nullProcessor, pointLength)
+		layer.Processors = append(layer.Processors, nullProcessor)
+	}
+}
+
+// GenerateEmptyProcessor ...
+func GenerateEmptyProcessor(processor *Processor, pointLength int) {
+	for i := 0; i < pointLength; i++ {
+		processor.Points = append(processor.Points, 0x00)
 	}
 }
 
