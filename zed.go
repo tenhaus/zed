@@ -61,6 +61,7 @@ func Partition(data []byte, layer *Layer, pointLength int) {
 			// Fill with the remaining data
 			processor.Points = data[index*pointLength : length]
 			FillPartialProcessor(&processor, pointLength)
+
 		} else {
 			processor.Points = data[index*pointLength : (index*pointLength)+pointLength]
 		}
