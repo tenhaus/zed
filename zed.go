@@ -1,14 +1,15 @@
 package main
 
-import (
-	"errors"
-	"fmt"
-)
+import "errors"
 
 type CompressedData struct {
 	GridCount  uint
 	Depth      uint
 	Compressed map[byte]uint64
+}
+
+type Layer struct {
+	Processors []Processor
 }
 
 type Processor struct {
@@ -17,16 +18,16 @@ type Processor struct {
 
 // Compress just gets the job done
 func Compress(data []byte) error {
-	Partition(data)
+	var top Layer
+	Partition(data, &top)
+
 	return errors.New("nope")
 }
 
-func Partition(data []byte) {
+func Partition(data []byte, layer *Layer) {
 	length := len(data)
 	index := 0
 	points := 5
-
-	var partitions []Processor
 
 	for {
 
@@ -40,13 +41,11 @@ func Partition(data []byte) {
 
 		if (index*points)+points > length {
 			processor.Points = data[index*points : length]
-			fmt.Println(index*points, length)
 		} else {
 			processor.Points = data[index*points : (index*points)+points]
-			fmt.Println(index*points, (index*points)+points)
 		}
 
-		partitions = append(partitions, processor)
+		layer.Processors = append(layer.Processors, processor)
 		index++
 	}
 }
