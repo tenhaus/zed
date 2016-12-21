@@ -2,16 +2,19 @@ package main
 
 import "fmt"
 
+// CompressedData ...
 type CompressedData struct {
 	GridCount  uint
 	Depth      uint
 	Compressed map[byte]uint64
 }
 
+// Layer ...
 type Layer struct {
 	Processors []Processor
 }
 
+// Processor ...
 type Processor struct {
 	Points []byte
 }
@@ -23,10 +26,12 @@ func Compress(data []byte) {
 	Spin(&top)
 }
 
+// Spin ...
 func Spin(layer *Layer) {
 	fmt.Println(layer)
 }
 
+// Partition ...
 func Partition(data []byte, layer *Layer) {
 	length := len(data)
 	index := 0
