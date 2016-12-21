@@ -1,6 +1,6 @@
 package main
 
-import "errors"
+import "fmt"
 
 type CompressedData struct {
 	GridCount  uint
@@ -17,17 +17,20 @@ type Processor struct {
 }
 
 // Compress just gets the job done
-func Compress(data []byte) error {
+func Compress(data []byte) {
 	var top Layer
 	Partition(data, &top)
+	Spin(&top)
+}
 
-	return errors.New("nope")
+func Spin(layer *Layer) {
+	fmt.Println(layer)
 }
 
 func Partition(data []byte, layer *Layer) {
 	length := len(data)
 	index := 0
-	points := 5
+	points := 6
 
 	for {
 
