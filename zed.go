@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 // CompressedData ...
 type CompressedData struct {
@@ -29,6 +32,15 @@ func Compress(data []byte) {
 // Spin ...
 func Spin(layer *Layer) {
 	fmt.Println(layer)
+}
+
+// GetLayerSize is probably a useless function because
+// we can just len(layer.Processors) after partitioning
+func GetLayerSize(data []byte, pointLength int) uint {
+	length := len(data)
+	div := float64(length) / float64(pointLength)
+	ceil := math.Ceil(div)
+	return uint(ceil)
 }
 
 // Partition ...

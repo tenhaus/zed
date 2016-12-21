@@ -32,3 +32,12 @@ func TestFill(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestGetLayerSize(t *testing.T) {
+	file, _ := ioutil.ReadFile("files/20chars.txt")
+	layerSize := GetLayerSize(file, 6)
+
+	if layerSize != 4 {
+		t.Fail()
+	}
+}
