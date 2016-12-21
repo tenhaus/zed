@@ -22,7 +22,7 @@ type Processor struct {
 // Compress just gets the job done
 func Compress(data []byte) {
 	var top Layer
-	Partition(data, &top)
+	Partition(data, &top, 6)
 	Spin(&top)
 }
 
@@ -32,10 +32,9 @@ func Spin(layer *Layer) {
 }
 
 // Partition ...
-func Partition(data []byte, layer *Layer) {
+func Partition(data []byte, layer *Layer, points int) {
 	length := len(data)
 	index := 0
-	points := 6
 
 	for {
 
@@ -49,7 +48,9 @@ func Partition(data []byte, layer *Layer) {
 
 		// Take a chunk
 		if (index*points)+points > length {
+			// Fill with the remaining data
 			processor.Points = data[index*points : length]
+			FillPartialProcessor(&processor, points)
 		} else {
 			processor.Points = data[index*points : (index*points)+points]
 		}
@@ -59,5 +60,15 @@ func Partition(data []byte, layer *Layer) {
 
 		// Continue
 		index++
+	}
+}
+
+// FillPartialProcessor ...
+func FillPartialProcessor(processor *Processor, pointLength int) {
+	length := len(processor.Points)
+	numEmpty := pointLength - length
+
+	for i := pointLength - numEmpty; i < pointLength; i++ {
+		processor.Points = append(processor.Points, 0x00)
 	}
 }
