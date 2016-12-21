@@ -17,6 +17,7 @@ type Layer struct {
 // Processor ...
 type Processor struct {
 	Points []byte
+	Angle  uint
 }
 
 // Compress just gets the job done
