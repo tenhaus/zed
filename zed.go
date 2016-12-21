@@ -39,13 +39,17 @@ func Partition(data []byte, layer *Layer) {
 		// Create the processor
 		var processor Processor
 
+		// Take a chunk
 		if (index*points)+points > length {
 			processor.Points = data[index*points : length]
 		} else {
 			processor.Points = data[index*points : (index*points)+points]
 		}
 
+		// Add to the stack
 		layer.Processors = append(layer.Processors, processor)
+
+		// Continue
 		index++
 	}
 }
