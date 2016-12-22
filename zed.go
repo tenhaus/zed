@@ -62,33 +62,24 @@ func GetLayerSize(data []byte, pointLength int) uint {
 func Partition(data []byte, layer *Layer, pointLength int) {
 	layer.PointLength = pointLength
 	length := len(data)
-	index := 0
 
-	for {
-
-		// Break if we're done
-		if index*pointLength >= length {
-			break
-		}
+	for i := 0; i*pointLength < length; i++ {
 
 		// Create the processor
 		var processor Processor
 
 		// Take a chunk
-		if (index*pointLength)+pointLength > length {
+		if (i*pointLength)+pointLength > length {
 			// Fill with the remaining data
-			processor.Points = data[index*pointLength : length]
+			processor.Points = data[i*pointLength : length]
 			FillPartialProcessor(&processor, pointLength)
 
 		} else {
-			processor.Points = data[index*pointLength : (index*pointLength)+pointLength]
+			processor.Points = data[i*pointLength : (i*pointLength)+pointLength]
 		}
 
 		// Add to the stack
 		layer.Processors = append(layer.Processors, processor)
-
-		// Continue
-		index++
 	}
 
 	numProcessors := len(layer.Processors)
@@ -106,7 +97,7 @@ func Partition(data []byte, layer *Layer, pointLength int) {
 
 // GenerateRows tries to generate an even cube of processors
 func GenerateRows(layer *Layer) {
-	numProcessors := len(layer.Processors)
+	// numProcessors := len(layer.Processors)
 }
 
 // GenerateEmptyProcessor ...
