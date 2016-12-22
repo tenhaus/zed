@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"testing"
 )
@@ -61,4 +62,12 @@ func TestGetGridSize(t *testing.T) {
 	if xMax != 30 && yMax != 30 {
 		t.Fail()
 	}
+}
+
+func TestBitmath(t *testing.T) {
+	test := []byte("aeio")
+
+	result := test[0] & test[1] & test[2] & test[3]
+	result2 := test[1] & test[2] & test[3]
+	fmt.Println(string(result), string(result2))
 }
