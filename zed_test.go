@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/ioutil"
 	"testing"
 )
@@ -35,7 +34,7 @@ func TestFill(t *testing.T) {
 }
 
 func TestPartitionsAreOdd(t *testing.T) {
-	file, _ := ioutil.ReadFile("files/20chars.txt")
+	file, _ := ioutil.ReadFile("files/big.txt")
 	var layer Layer
 	Partition(file, &layer, 6)
 
@@ -62,12 +61,4 @@ func TestGetGridSize(t *testing.T) {
 	if xMax != 30 && yMax != 30 {
 		t.Fail()
 	}
-}
-
-func TestBitmath(t *testing.T) {
-	test := []byte("aeio")
-
-	result := test[0] & test[1] & test[2] & test[3]
-	result2 := test[1] & test[2] & test[3]
-	fmt.Println(string(result), string(result2))
 }
