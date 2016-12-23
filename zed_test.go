@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"math"
 	"testing"
 )
 
@@ -38,9 +39,10 @@ func TestPartitionsAreOdd(t *testing.T) {
 	var layer Layer
 	Partition(file, &layer, 6)
 
-	if len(layer.Processors) != 5 {
+	if math.Mod(float64(len(layer.Processors)), 2.0) <= 0.0 {
 		t.Fail()
 	}
+
 }
 
 func TestGetLayerSize(t *testing.T) {
