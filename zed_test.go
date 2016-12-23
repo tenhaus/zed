@@ -35,7 +35,8 @@ func TestFill(t *testing.T) {
 }
 
 func TestPartitionsAreOdd(t *testing.T) {
-	file, _ := ioutil.ReadFile("files/big.txt")
+
+	file, _ := ioutil.ReadFile("files/octopus.jpg")
 	var layer Layer
 	Partition(file, &layer, 6)
 

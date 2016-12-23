@@ -13,7 +13,6 @@ type CompressedData struct {
 type Layer struct {
 	Processors  []Processor
 	PointLength int
-	Rows        []Row
 }
 
 // Row ...
@@ -37,11 +36,6 @@ func Compress(data []byte) {
 // Spin ...
 func Spin(layer *Layer) {
 	// fmt.Println(layer)
-}
-
-// GetPoint ...
-func GetPoint(x int, y int) (byte, byte) {
-	return 0x00, 0x00
 }
 
 // GetGridSize ...
@@ -91,13 +85,6 @@ func Partition(data []byte, layer *Layer, pointLength int) {
 		GenerateEmptyProcessor(&nullProcessor, pointLength)
 		layer.Processors = append(layer.Processors, nullProcessor)
 	}
-
-	GenerateRows(layer)
-}
-
-// GenerateRows tries to generate an even cube of processors
-func GenerateRows(layer *Layer) {
-	// numProcessors := len(layer.Processors)
 }
 
 // GenerateEmptyProcessor ...
