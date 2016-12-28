@@ -28,7 +28,6 @@ type Row struct {
 // Processor ...
 type Processor struct {
 	Points []byte
-	Angle  uint
 	Tests  []byte
 }
 
