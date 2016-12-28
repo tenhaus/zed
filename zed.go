@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 	"sort"
 	"strings"
@@ -77,7 +78,12 @@ func (c Commons) Slice() [][]byte {
 	var slices [][]byte
 
 	for i := 0; i < len(c.Keys); i++ {
-		slices = append(slices, c.Keys[i:i+pointLength])
+		if i+pointLength > len(c.Keys) {
+			slices = append(slices, c.Keys[i:len(c.Keys)])
+		} else {
+			slices = append(slices, c.Keys[i:i+pointLength])
+		}
+
 	}
 
 	return slices
@@ -116,7 +122,7 @@ func Compress(data []byte) {
 		}
 	}
 
-	// fmt.Println(strings.Join(result, ""))
+	fmt.Println(strings.Join(result, ""))
 }
 
 // MapCommons ...
