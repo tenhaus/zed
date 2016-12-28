@@ -7,6 +7,12 @@ import (
 	"strings"
 )
 
+var matchCodes = []string{
+	"001", "010", "100", "101", "110", "111",
+}
+
+var pointLength = 6
+
 // CompressedData ...
 type CompressedData struct {
 	GridCount  uint
@@ -16,8 +22,7 @@ type CompressedData struct {
 
 // Layer ...
 type Layer struct {
-	Processors  []Processor
-	PointLength int
+	Processors []Processor
 }
 
 // Row ...
@@ -52,10 +57,6 @@ func (p *Processor) Test() string {
 // 110 char 5
 // 111 char 6
 func Match(a byte, tests []byte) string {
-	matchCodes := []string{
-		"001", "010", "100", "101", "110", "111",
-	}
-
 	for i := 0; i <= 5; i++ {
 		if a == tests[i] {
 			return matchCodes[i]
@@ -85,10 +86,10 @@ func (c Commons) Less(i, j int) bool {
 }
 
 // Compress just gets the job done
-func Compress(data []byte, pointLength int) {
+func Compress(data []byte) {
 	// Partition
 	var top Layer
-	Partition(data, &top, pointLength)
+	Partition(data, &top)
 
 	// Sort by commons
 	commons := MapCommons(data)
@@ -102,6 +103,7 @@ func Compress(data []byte, pointLength int) {
 	}
 
 	fmt.Println(strings.Join(result, ""))
+	fmt.Println(commons.Keys)
 }
 
 // MapCommons ...
@@ -125,13 +127,13 @@ func MapCommons(data []byte) Commons {
 }
 
 // GetGridSize ...
-func GetGridSize(pointLength int, processorLength int) (int, int) {
+func GetGridSize(processorLength int) (int, int) {
 	return pointLength * processorLength, pointLength * processorLength
 }
 
 // GetLayerSize is probably a useless function because
 // we can just len(layer.Processors) after partitioning
-func GetLayerSize(data []byte, pointLength int) uint {
+func GetLayerSize(data []byte) uint {
 	length := len(data)
 	div := float64(length) / float64(pointLength)
 	ceil := math.Ceil(div)
@@ -139,8 +141,7 @@ func GetLayerSize(data []byte, pointLength int) uint {
 }
 
 // Partition ...
-func Partition(data []byte, layer *Layer, pointLength int) {
-	layer.PointLength = pointLength
+func Partition(data []byte, layer *Layer) {
 	length := len(data)
 
 	for i := 0; i*pointLength < length; i++ {
@@ -152,7 +153,7 @@ func Partition(data []byte, layer *Layer, pointLength int) {
 		if (i*pointLength)+pointLength > length {
 			// Fill with the remaining data
 			processor.Points = data[i*pointLength : length]
-			FillPartialProcessor(&processor, pointLength)
+			FillPartialProcessor(&processor)
 
 		} else {
 			processor.Points = data[i*pointLength : (i*pointLength)+pointLength]
@@ -168,20 +169,20 @@ func Partition(data []byte, layer *Layer, pointLength int) {
 	// Make sure we have an odd number of processors
 	if remainder == 0 {
 		var nullProcessor Processor
-		GenerateEmptyProcessor(&nullProcessor, pointLength)
+		GenerateEmptyProcessor(&nullProcessor)
 		layer.Processors = append(layer.Processors, nullProcessor)
 	}
 }
 
 // GenerateEmptyProcessor ...
-func GenerateEmptyProcessor(processor *Processor, pointLength int) {
+func GenerateEmptyProcessor(processor *Processor) {
 	for i := 0; i < pointLength; i++ {
 		processor.Points = append(processor.Points, 0x00)
 	}
 }
 
 // FillPartialProcessor ...
-func FillPartialProcessor(processor *Processor, pointLength int) {
+func FillPartialProcessor(processor *Processor) {
 	length := len(processor.Points)
 	numEmpty := pointLength - length
 

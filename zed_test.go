@@ -7,19 +7,18 @@ import (
 )
 
 func TestCompress(t *testing.T) {
-	file, _ := ioutil.ReadFile("files/1000.txt")
-	Compress(file, 6)
+	file, _ := ioutil.ReadFile("files/black.jpg")
+	Compress(file)
 }
 
 func TestFill(t *testing.T) {
-	pointLength := 6
 	var processor Processor
 
 	processor.Points = append(processor.Points, 0x01)
 	processor.Points = append(processor.Points, 0x01)
 	processor.Points = append(processor.Points, 0x01)
 
-	FillPartialProcessor(&processor, pointLength)
+	FillPartialProcessor(&processor)
 
 	if processor.Points[3] != 0x00 &&
 		processor.Points[4] != 0x00 &&
@@ -54,7 +53,7 @@ func TestPartitionsAreOdd(t *testing.T) {
 
 	file, _ := ioutil.ReadFile("files/octopus.jpg")
 	var layer Layer
-	Partition(file, &layer, 6)
+	Partition(file, &layer)
 
 	if math.Mod(float64(len(layer.Processors)), 2.0) <= 0.0 {
 		t.Fail()
@@ -64,7 +63,7 @@ func TestPartitionsAreOdd(t *testing.T) {
 
 func TestGetLayerSize(t *testing.T) {
 	file, _ := ioutil.ReadFile("files/20chars.txt")
-	layerSize := GetLayerSize(file, 6)
+	layerSize := GetLayerSize(file)
 
 	if layerSize != 4 {
 		t.Fail()
@@ -74,8 +73,8 @@ func TestGetLayerSize(t *testing.T) {
 func TestGetGridSize(t *testing.T) {
 	file, _ := ioutil.ReadFile("files/5processors.txt")
 	var layer Layer
-	Partition(file, &layer, 6)
-	xMax, yMax := GetGridSize(6, len(layer.Processors))
+	Partition(file, &layer)
+	xMax, yMax := GetGridSize(len(layer.Processors))
 
 	if xMax != 30 && yMax != 30 {
 		t.Fail()
