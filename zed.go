@@ -1,6 +1,11 @@
 package main
 
-import "math"
+import (
+	"fmt"
+	"math"
+	"sort"
+	"strings"
+)
 
 // CompressedData ...
 type CompressedData struct {
@@ -24,18 +29,100 @@ type Row struct {
 type Processor struct {
 	Points []byte
 	Angle  uint
+	Tests  []byte
+}
+
+// Test ...
+func (p *Processor) Test() string {
+	var result []string
+
+	for i := 0; i < len(p.Points); i++ {
+		matchCode := Match(p.Points[i], p.Tests)
+		result = append(result, matchCode)
+	}
+
+	return strings.Join(result, "")
+}
+
+// Match tests two bytes
+// 000 No match
+// 001 char 1
+// 010 char 2
+// 100 char 3
+// 101 char 4
+// 110 char 5
+// 111 char 6
+func Match(a byte, tests []byte) string {
+	matchCodes := []string{
+		"001", "010", "100", "101", "110", "111",
+	}
+
+	for i := 0; i <= 5; i++ {
+		if a == tests[i] {
+			return matchCodes[i]
+		}
+	}
+
+	return "000"
+}
+
+// Commons is used to sort common bytes
+type Commons struct {
+	Data map[byte]int
+	Keys []byte
+}
+
+func (c Commons) Len() int {
+	return len(c.Keys)
+}
+
+// Swap is part of sort.Interface.
+func (c Commons) Swap(i, j int) {
+	c.Keys[i], c.Keys[j] = c.Keys[j], c.Keys[i]
+}
+
+func (c Commons) Less(i, j int) bool {
+	return c.Data[c.Keys[i]] > c.Data[c.Keys[j]]
 }
 
 // Compress just gets the job done
-func Compress(data []byte) {
+func Compress(data []byte, pointLength int) {
+	// Partition
 	var top Layer
-	Partition(data, &top, 6)
-	Spin(&top)
+	Partition(data, &top, pointLength)
+
+	// Sort by commons
+	commons := MapCommons(data)
+	tests := commons.Keys[0:6]
+
+	var result []string
+	// map first layer
+	for _, processor := range top.Processors {
+		processor.Tests = tests
+		result = append(result, processor.Test())
+	}
+
+	fmt.Println(strings.Join(result, ""))
 }
 
-// Spin ...
-func Spin(layer *Layer) {
-	// fmt.Println(layer)
+// MapCommons ...
+func MapCommons(data []byte) Commons {
+
+	var commons Commons
+	commons.Data = make(map[byte]int)
+
+	for _, val := range data {
+		if _, ok := commons.Data[val]; !ok {
+			commons.Data[val] = 1
+			commons.Keys = append(commons.Keys, val)
+		} else {
+			commons.Data[val]++
+		}
+	}
+
+	sort.Sort(commons)
+
+	return commons
 }
 
 // GetGridSize ...
