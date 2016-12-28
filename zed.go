@@ -96,6 +96,7 @@ func Compress(data []byte) {
 	tests := commons.Keys[0:6]
 
 	var result []string
+
 	// map first layer
 	for _, processor := range top.Processors {
 		processor.Tests = tests
@@ -103,7 +104,6 @@ func Compress(data []byte) {
 	}
 
 	fmt.Println(strings.Join(result, ""))
-	fmt.Println(commons.Keys)
 }
 
 // MapCommons ...
@@ -122,7 +122,6 @@ func MapCommons(data []byte) Commons {
 	}
 
 	sort.Sort(commons)
-
 	return commons
 }
 

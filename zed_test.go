@@ -7,7 +7,7 @@ import (
 )
 
 func TestCompress(t *testing.T) {
-	file, _ := ioutil.ReadFile("files/black.jpg")
+	file, _ := ioutil.ReadFile("files/1000.txt")
 	Compress(file)
 }
 
