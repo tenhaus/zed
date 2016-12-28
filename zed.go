@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math"
 	"sort"
 	"strings"
@@ -23,6 +22,7 @@ type CompressedData struct {
 // Layer ...
 type Layer struct {
 	Processors []Processor
+	Commons    Commons
 }
 
 // Row ...
@@ -72,6 +72,17 @@ type Commons struct {
 	Keys []byte
 }
 
+// Slice ...
+func (c Commons) Slice() [][]byte {
+	var slices [][]byte
+
+	for i := 0; i < len(c.Keys); i++ {
+		slices = append(slices, c.Keys[i:i+pointLength])
+	}
+
+	return slices
+}
+
 func (c Commons) Len() int {
 	return len(c.Keys)
 }
@@ -92,18 +103,20 @@ func Compress(data []byte) {
 	Partition(data, &top)
 
 	// Sort by commons
-	commons := MapCommons(data)
-	tests := commons.Keys[0:6]
+	top.Commons = MapCommons(data)
+	allTests := top.Commons.Slice()
 
 	var result []string
 
-	// map first layer
-	for _, processor := range top.Processors {
-		processor.Tests = tests
-		result = append(result, processor.Test())
+	for _, tests := range allTests {
+		// map first layer
+		for _, processor := range top.Processors {
+			processor.Tests = tests
+			result = append(result, processor.Test())
+		}
 	}
 
-	fmt.Println(strings.Join(result, ""))
+	// fmt.Println(strings.Join(result, ""))
 }
 
 // MapCommons ...
@@ -152,7 +165,7 @@ func Partition(data []byte, layer *Layer) {
 		if (i*pointLength)+pointLength > length {
 			// Fill with the remaining data
 			processor.Points = data[i*pointLength : length]
-			FillPartialProcessor(&processor)
+			// FillPartialProcessor(&processor)
 
 		} else {
 			processor.Points = data[i*pointLength : (i*pointLength)+pointLength]
