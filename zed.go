@@ -5,6 +5,8 @@ import (
 	"math/big"
 	"os"
 	"sort"
+
+	"github.com/nareix/bits"
 )
 
 var pointLength = 6
@@ -123,15 +125,23 @@ func Compress(data []byte, out *os.File) {
 	top.Commons = MapCommons(data)
 	groupedTests := top.Commons.Slice()
 
+	w := &bits.Writer{W: out}
+
 	for _, tests := range groupedTests {
 
 		// map first layer
 		for _, processor := range top.Processors {
 			processor.Tests = tests
-			processor.Test()
-			// result := processor.Test()
-			// fmt.Println(result.Bits())
+			result := processor.Test()
+			if result.Int64() == 0 {
+				w.WriteBits(3, 3)
+			} else {
+				w.WriteBits64(result.Uint64(), 18)
+			}
+
 		}
+
+		w.FlushBits()
 	}
 }
 

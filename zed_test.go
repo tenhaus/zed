@@ -7,7 +7,7 @@ import (
 )
 
 func TestCompress(t *testing.T) {
-	file, _ := ioutil.ReadFile("files/double.txt")
+	file, _ := ioutil.ReadFile("files/optimal.txt")
 
 	if out, err := os.Create("out.zed"); err != nil {
 		t.Fail()
