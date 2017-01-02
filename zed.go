@@ -46,11 +46,6 @@ func (p *Processor) Test() big.Int {
 		}
 	}
 
-	// fmt.Println(p)
-	// for i := 0; i < 3*6; i++ {
-	// 	fmt.Println(result.Bit(i))
-	// }
-
 	return result
 }
 
@@ -133,6 +128,7 @@ func Compress(data []byte, out *os.File) {
 		// map first layer
 		for _, processor := range top.Processors {
 			processor.Tests = tests
+			processor.Test()
 			// result := processor.Test()
 			// fmt.Println(result.Bits())
 		}
@@ -183,18 +179,17 @@ func Partition(data []byte, layer *Layer) {
 		var processor Processor
 
 		// Take a chunk
-		if (i*pointLength)+pointLength > length {
-			if (i*pointLength)+pointLength == length {
-				break
+		if (i*pointLength)+pointLength >= length {
+			if (i * pointLength) != length {
+				processor.Points = data[i*pointLength : length]
+				layer.Processors = append(layer.Processors, processor)
 			}
-			processor.Points = data[i*pointLength : length]
 		} else {
 			processor.Points = data[i*pointLength : (i*pointLength)+pointLength]
+			layer.Processors = append(layer.Processors, processor)
 		}
-
-		// Add to the stack
-		layer.Processors = append(layer.Processors, processor)
 	}
+
 }
 
 // GenerateEmptyProcessor ...
