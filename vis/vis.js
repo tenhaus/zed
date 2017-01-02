@@ -38,10 +38,10 @@ function onDocumentMouseMove(event) {
 
 
 function render() {
-  // camera.position.x += ( mouseX - camera.position.x ) * .05;
-	// camera.position.y += ( - mouseY - camera.position.y ) * .05;
+  camera.position.x += ( mouseX - camera.position.x ) * .05;
+	camera.position.y += ( - mouseY - camera.position.y ) * .05;
 
-  // camera.lookAt( scene.position );
+  camera.lookAt( scene.position );
 
   requestAnimationFrame(render);
   renderer.localClippingEnabled = false;
@@ -53,7 +53,7 @@ function render() {
 }
 
 function text() {
-  var textGeo = new THREE.TextGeometry( "heeeey", {
+  var textGeo = new THREE.TextGeometry( "x1", {
 		font: font,
 		size: 80,
 		height: 20,
@@ -63,15 +63,15 @@ function text() {
   textGeo.computeBoundingBox();
 	textGeo.computeVertexNormals();
 
-  var material = new THREE.MeshBasicMaterial({color:0x00ffff})
+  var material = new THREE.MeshBasicMaterial({color:0x00ff00})
 
   var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 	textMesh1 = new THREE.Mesh( textGeo, material );
 	textMesh1.position.x = 150;
 	textMesh1.position.y = 150;
-	textMesh1.position.z = 0;
-	textMesh1.rotation.x = 0;
-	textMesh1.rotation.y = Math.PI * 2;
+	// textMesh1.position.z = 0;
+	// textMesh1.rotation.x = 0;
+	// textMesh1.rotation.y = Math.PI * 2;
 	scene.add( textMesh1 );
 }
 
