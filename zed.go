@@ -59,7 +59,8 @@ func (p *Processor) Test() string {
 // 111 char 6
 func Match(a byte, tests []byte) string {
 	for i := 0; i <= 5; i++ {
-		if a == tests[i] {
+
+		if len(tests) > i && a == tests[i] {
 			return matchCodes[i]
 		}
 	}
