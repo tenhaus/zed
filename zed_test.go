@@ -2,13 +2,18 @@ package main
 
 import (
 	"io/ioutil"
-	"math"
+	"os"
 	"testing"
 )
 
 func TestCompress(t *testing.T) {
-	file, _ := ioutil.ReadFile("files/1000.txt")
-	Compress(file)
+	file, _ := ioutil.ReadFile("files/double.txt")
+
+	if out, err := os.Create("out.zed"); err != nil {
+		t.Fail()
+	} else {
+		Compress(file, out)
+	}
 }
 
 func TestFill(t *testing.T) {
@@ -49,16 +54,14 @@ func TestMapCommons(t *testing.T) {
 	}
 }
 
-func TestPartitionsAreOdd(t *testing.T) {
-
-	file, _ := ioutil.ReadFile("files/octopus.jpg")
+func TestPartition(t *testing.T) {
+	file, _ := ioutil.ReadFile("files/double.txt")
 	var layer Layer
 	Partition(file, &layer)
 
-	if math.Mod(float64(len(layer.Processors)), 2.0) <= 0.0 {
+	if len(layer.Processors) != 2 {
 		t.Fail()
 	}
-
 }
 
 func TestGetLayerSize(t *testing.T) {
@@ -70,13 +73,18 @@ func TestGetLayerSize(t *testing.T) {
 	}
 }
 
-func TestGetGridSize(t *testing.T) {
-	file, _ := ioutil.ReadFile("files/5processors.txt")
-	var layer Layer
-	Partition(file, &layer)
-	xMax, yMax := GetGridSize(len(layer.Processors))
+func TestSliceCommons(t *testing.T) {
+	file, _ := ioutil.ReadFile("files/double.txt")
+	commons := MapCommons(file)
 
-	if xMax != 30 && yMax != 30 {
+	if len(commons.Slice()) != 2 {
+		t.Fail()
+	}
+
+	uneven, _ := ioutil.ReadFile("files/double_uneven.txt")
+	commons2 := MapCommons(uneven)
+
+	if len(commons2.Slice()) != 2 {
 		t.Fail()
 	}
 }

@@ -1,15 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"math"
+	"math/big"
+	"os"
 	"sort"
-	"strings"
 )
-
-var matchCodes = []string{
-	"001", "010", "100", "101", "110", "111",
-}
 
 var pointLength = 6
 
@@ -38,34 +34,44 @@ type Processor struct {
 }
 
 // Test ...
-func (p *Processor) Test() string {
-	var result []string
+func (p *Processor) Test() big.Int {
+	var result big.Int
 
 	for i := 0; i < len(p.Points); i++ {
 		matchCode := Match(p.Points[i], p.Tests)
-		result = append(result, matchCode)
+		matchLen := len(matchCode)
+
+		for j := 0; j < matchLen; j++ {
+			result.SetBit(&result, (i*matchLen)+j, matchCode[j])
+		}
 	}
 
-	return strings.Join(result, "")
+	// fmt.Println(p)
+	// for i := 0; i < 3*6; i++ {
+	// 	fmt.Println(result.Bit(i))
+	// }
+
+	return result
 }
 
-// Match tests two bytes
-// 000 No match
-// 001 char 1
-// 010 char 2
-// 100 char 3
-// 101 char 4
-// 110 char 5
-// 111 char 6
-func Match(a byte, tests []byte) string {
-	for i := 0; i <= 5; i++ {
+var noMatch = []uint{0, 0, 0}
+var char1 = []uint{0, 0, 1}
+var char2 = []uint{0, 1, 0}
+var char3 = []uint{1, 0, 0}
+var char4 = []uint{1, 0, 1}
+var char5 = []uint{1, 1, 0}
+var char6 = []uint{1, 1, 1}
+var matchCodes = [][]uint{char1, char2, char3, char4, char5, char6}
 
+// Match tests two bytes
+func Match(a byte, tests []byte) []uint {
+	for i := 0; i <= 5; i++ {
 		if len(tests) > i && a == tests[i] {
 			return matchCodes[i]
 		}
 	}
 
-	return "000"
+	return noMatch
 }
 
 // Commons is used to sort common bytes
@@ -77,12 +83,21 @@ type Commons struct {
 // Slice ...
 func (c Commons) Slice() [][]byte {
 	var slices [][]byte
+	numSlices := math.Ceil(float64(len(c.Keys) / pointLength))
 
-	for i := 0; i < len(c.Keys); i++ {
-		if i+pointLength > len(c.Keys) {
-			slices = append(slices, c.Keys[i:len(c.Keys)])
+	for i := 0; i <= int(numSlices); i++ {
+		var slice []byte
+
+		if (i*pointLength)+pointLength > len(c.Keys) {
+			slice = c.Keys[(i * pointLength):len(c.Keys)]
+
+			if i*pointLength != len(c.Keys) {
+				slices = append(slices, slice)
+			}
+
 		} else {
-			slices = append(slices, c.Keys[i:i+pointLength])
+			slice = c.Keys[(i * pointLength) : (i*pointLength)+pointLength]
+			slices = append(slices, slice)
 		}
 
 	}
@@ -104,26 +119,24 @@ func (c Commons) Less(i, j int) bool {
 }
 
 // Compress just gets the job done
-func Compress(data []byte) {
+func Compress(data []byte, out *os.File) {
 	// Partition
 	var top Layer
 	Partition(data, &top)
 
 	// Sort by commons
 	top.Commons = MapCommons(data)
-	allTests := top.Commons.Slice()
+	groupedTests := top.Commons.Slice()
 
-	var result []string
+	for _, tests := range groupedTests {
 
-	for _, tests := range allTests {
 		// map first layer
 		for _, processor := range top.Processors {
 			processor.Tests = tests
-			result = append(result, processor.Test())
+			// result := processor.Test()
+			// fmt.Println(result.Bits())
 		}
 	}
-
-	fmt.Println(strings.Join(result, ""))
 }
 
 // MapCommons ...
@@ -162,34 +175,25 @@ func GetLayerSize(data []byte) uint {
 // Partition ...
 func Partition(data []byte, layer *Layer) {
 	length := len(data)
+	numProcessors := int(math.Ceil(float64(length / pointLength)))
 
-	for i := 0; i*pointLength < length; i++ {
+	for i := 0; i < numProcessors; i++ {
 
 		// Create the processor
 		var processor Processor
 
 		// Take a chunk
 		if (i*pointLength)+pointLength > length {
-			// Fill with the remaining data
+			if (i*pointLength)+pointLength == length {
+				break
+			}
 			processor.Points = data[i*pointLength : length]
-			// FillPartialProcessor(&processor)
-
 		} else {
 			processor.Points = data[i*pointLength : (i*pointLength)+pointLength]
 		}
 
 		// Add to the stack
 		layer.Processors = append(layer.Processors, processor)
-	}
-
-	numProcessors := len(layer.Processors)
-	remainder := math.Mod(float64(numProcessors), 2.0)
-
-	// Make sure we have an odd number of processors
-	if remainder == 0 {
-		var nullProcessor Processor
-		GenerateEmptyProcessor(&nullProcessor)
-		layer.Processors = append(layer.Processors, nullProcessor)
 	}
 }
 
