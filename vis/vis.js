@@ -8,7 +8,8 @@ $(document).ready(function() {
 	});
 })
 
-var data = "this is a test".split("")
+var data = "Please read the \"legal small print,\" and other information about the eBook and Project Gutenberg at the bottom of this file.  Included is important information about your specific rights and restrictions in how the file may be used.  You can also find out about how to make a donation to Project Gutenberg, and how to get involved.".split("")
+
 var scene, camera, renderer, root;
 var mouseX = 0, mouseY = 0;
 
@@ -40,7 +41,7 @@ function onDocumentMouseMove(event) {
 function render() {
   // camera.position.x += ( mouseX - camera.position.x ) * .05;
 	// camera.position.y += ( - mouseY - camera.position.y ) * .05;
-  root.rotation.x += 0.1
+  // root.rotation.x += 0.1
   camera.lookAt( scene.position );
 
   requestAnimationFrame(render);
@@ -76,51 +77,51 @@ function cubes() {
   var material = new THREE.MeshBasicMaterial({color:0x00ff00, wireframe: true})
 
   root = new THREE.Mesh( geometry, material);
-	root.position.x = 10;
+	root.position.x = windowHalfX * -1;
 
   var hs = size/2
 
-  text("a", root, hs, 0)
-  text("b", root, hs/2, hs*-1)
-  text("c", root, (hs/2)*-1, hs*-1)
-  text("d", root, hs*-1, 0)
-  text("e", root, (hs/2)*-1, hs)
-  text("f", root, hs/2, hs)
+  text(data[0], root, hs/2, hs)
+  text(data[1], root, hs, 0)
+  text(data[2], root, hs/2, hs*-1)
+  text(data[3], root, (hs/2)*-1, hs*-1)
+  text(data[4], root, hs*-1, 0)
+  text(data[5], root, (hs/2)*-1, hs)
 
 	scene.add( root );
 
   var amount = 200, object, parent = root;
 
-  for(var i = 0; i < amount; i ++) {
+  for(var i = 6; i < data.length; i ++) {
 		object = new THREE.Mesh(geometry, material);
 		object.position.x = 150;
-    object.rotation.x = 25
+    // object.rotation.x = 25
 		parent.add(object);
 		parent = object;
 
-    text("a", object, hs, 0)
-    text("b", object, hs/2, hs*-1)
-    text("c", object, (hs/2)*-1, hs*-1)
-    text("d", object, hs*-1, 0)
-    text("e", object, (hs/2)*-1, hs)
-    text("f", object, hs/2, hs)
+    text(data[i], object, hs/2, hs)
+    text(data[i+1], object, hs, 0)
+    text(data[i+2], object, hs/2, hs*-1)
+    text(data[i+3], object, (hs/2)*-1, hs*-1)
+    text(data[i+4], object, hs*-1, 0)
+    text(data[i+5], object, (hs/2)*-1, hs)
 	}
 
-  parent = root
-
-  for(var i = 0; i < amount; i ++) {
-		object = new THREE.Mesh(geometry, material);
-		object.position.x = -150;
-    object.rotation.x = -25
-		parent.add(object);
-		parent = object;
-
-    text("a", object, hs, 0)
-    text("b", object, hs/2, hs*-1)
-    text("c", object, (hs/2)*-1, hs*-1)
-    text("d", object, hs*-1, 0)
-    text("e", object, (hs/2)*-1, hs)
-    text("f", object, hs/2, hs)
-	}
+  // parent = root
+  //
+  // for(var i = 0; i < amount; i ++) {
+	// 	object = new THREE.Mesh(geometry, material);
+	// 	object.position.x = -150;
+  //   object.rotation.x = -25
+	// 	parent.add(object);
+	// 	parent = object;
+  //
+  //   text("a", object, hs, 0)
+  //   text("b", object, hs/2, hs*-1)
+  //   text("c", object, (hs/2)*-1, hs*-1)
+  //   text("d", object, hs*-1, 0)
+  //   text("e", object, (hs/2)*-1, hs)
+  //   text("f", object, hs/2, hs)
+	// }
 
 }
