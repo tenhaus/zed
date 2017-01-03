@@ -4,7 +4,6 @@ $(document).ready(function() {
 		font = response
     init()
     cubes()
-    text()
     render()
 	});
 })
@@ -21,7 +20,8 @@ var windowHalfY = window.innerHeight / 2;
 function init() {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 500;
+  camera.position.z = 800;
+  // camera.position.y = 500
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
@@ -38,49 +38,55 @@ function onDocumentMouseMove(event) {
 
 
 function render() {
-  camera.position.x += ( mouseX - camera.position.x ) * .05;
-	camera.position.y += ( - mouseY - camera.position.y ) * .05;
-
+  // camera.position.x += ( mouseX - camera.position.x ) * .05;
+	// camera.position.y += ( - mouseY - camera.position.y ) * .05;
+  root.rotation.x += 0.1
   camera.lookAt( scene.position );
 
   requestAnimationFrame(render);
   renderer.localClippingEnabled = false;
-  globalPlane = new THREE.Plane( new THREE.Vector3( - 1, 0, 0 ), 0.1 );
-  var globalPlanes = [ globalPlane ],
-					Empty = Object.freeze( [] );
-				renderer.clippingPlanes = Empty;
   renderer.render(scene, camera);
 }
 
-function text() {
-  var textGeo = new THREE.TextGeometry( "x1", {
+function text(val, root, x, y) {
+  var textGeo = new THREE.TextGeometry( val, {
 		font: font,
-		size: 80,
-		height: 20,
+		size: 20,
+		height: 1,
 		curveSegments: 2
 	});
 
+  textGeo.translate(-5, -5, 0)
   textGeo.computeBoundingBox();
 	textGeo.computeVertexNormals();
+
 
   var material = new THREE.MeshBasicMaterial({color:0x00ff00})
 
   var centerOffset = -0.5 * ( textGeo.boundingBox.max.x - textGeo.boundingBox.min.x );
 	textMesh1 = new THREE.Mesh( textGeo, material );
-	textMesh1.position.x = 150;
-	textMesh1.position.y = 150;
-	// textMesh1.position.z = 0;
-	// textMesh1.rotation.x = 0;
-	// textMesh1.rotation.y = Math.PI * 2;
-	scene.add( textMesh1 );
+	textMesh1.position.x = x;
+	textMesh1.position.y = y;
+  root.add(textMesh1);
 }
 
 function cubes() {
-  var geometry = new THREE.BoxGeometry(100,100,100)
-  var material = new THREE.MeshBasicMaterial({color:0x00ff00})
+  var size = 80
+  var geometry = new THREE.TorusGeometry(size, 2.5, 6, 0)
+  var material = new THREE.MeshBasicMaterial({color:0x00ff00, wireframe: true})
 
-  root = new THREE.Mesh( geometry, material );
+  root = new THREE.Mesh( geometry, material);
 	root.position.x = 10;
+
+  var hs = size/2
+
+  text("a", root, hs, 0)
+  text("b", root, hs/2, hs*-1)
+  text("c", root, (hs/2)*-1, hs*-1)
+  text("d", root, hs*-1, 0)
+  text("e", root, (hs/2)*-1, hs)
+  text("f", root, hs/2, hs)
+
 	scene.add( root );
 
   var amount = 200, object, parent = root;
@@ -88,53 +94,33 @@ function cubes() {
   for(var i = 0; i < amount; i ++) {
 		object = new THREE.Mesh(geometry, material);
 		object.position.x = 150;
+    object.rotation.x = 25
 		parent.add(object);
 		parent = object;
+
+    text("a", object, hs, 0)
+    text("b", object, hs/2, hs*-1)
+    text("c", object, (hs/2)*-1, hs*-1)
+    text("d", object, hs*-1, 0)
+    text("e", object, (hs/2)*-1, hs)
+    text("f", object, hs/2, hs)
 	}
 
-  parent = root;
+  parent = root
 
   for(var i = 0; i < amount; i ++) {
 		object = new THREE.Mesh(geometry, material);
 		object.position.x = -150;
+    object.rotation.x = -25
 		parent.add(object);
 		parent = object;
-	}
 
-  parent = root;
-
-	for(var i = 0; i < amount; i ++) {
-		object = new THREE.Mesh(geometry, material);
-		object.position.y = -150;
-		parent.add(object);
-		parent = object;
-	}
-
-  parent = root;
-
-	for(var i = 0; i < amount; i ++) {
-		object = new THREE.Mesh(geometry, material);
-		object.position.y = 150;
-		parent.add(object);
-		parent = object;
-	}
-
-  parent = root;
-
-	for(var i = 0; i < amount; i ++) {
-		object = new THREE.Mesh(geometry, material);
-		object.position.z = -150;
-		parent.add(object);
-		parent = object;
-	}
-
-  parent = root;
-
-	for(var i = 0; i < amount; i ++) {
-		object = new THREE.Mesh(geometry, material);
-		object.position.z = 150;
-		parent.add(object);
-		parent = object;
+    text("a", object, hs, 0)
+    text("b", object, hs/2, hs*-1)
+    text("c", object, (hs/2)*-1, hs*-1)
+    text("d", object, hs*-1, 0)
+    text("e", object, (hs/2)*-1, hs)
+    text("f", object, hs/2, hs)
 	}
 
 }
