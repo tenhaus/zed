@@ -9,3 +9,12 @@ html, body {
   height: 100%;
   padding: 300px;
 }
+
+#stats {
+  color: #fff;
+  position: fixed;
+  top:20px;
+  left:20px;
+  padding: 10px;
+  text-transform: uppercase;
+}
