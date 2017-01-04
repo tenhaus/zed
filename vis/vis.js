@@ -22,6 +22,7 @@ var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
 var rotationFrameCount = 0;
+var charRotationCount = 0;
 
 function init() {
   scene = new THREE.Scene();
@@ -44,20 +45,22 @@ function render() {
   rotationFrameCount++;
 
   if (rotationFrameCount >= 10) {
-    var odd = -1;
+    charRotationCount++;
 
     scene.traverse(function(child) {
       if(child.name == "oct") {
         child.rotation.z += Math.PI / 3
       }
 
-      if(child.name == "odd") {
+      if(child.name == "odd" && charRotationCount == 6) {
         child.rotation.z += (Math.PI / 3)*-1
       }
 
       // if (child.rotation.z == 360) child.rotation.z = 0
       rotationFrameCount = 0;
     });
+
+    if(charRotationCount == 6) charRotationCount = 0;
   }
 
   // camera.lookAt( scene.position );
