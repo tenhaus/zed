@@ -3,6 +3,7 @@ $(document).ready(function() {
 	loader.load( 'fonts/helvetiker_regular.typeface.json', function ( response ) {
 		font = response
     init()
+    uniques()
     info()
     cubes()
     render()
@@ -15,6 +16,7 @@ var scene, camera, renderer, root;
 var mouseX = 0, mouseY = 0;
 
 var font;
+var commons;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
@@ -145,9 +147,29 @@ function onDocumentMouseMove(event) {
 }
 
 function info() {
-  var p = document.createElement("P");                       // Create a <p> node
-  var t = document.createTextNode("Bytes " + data.length);      // Create a text node
+  var p = document.createElement("P");
+  var t = document.createTextNode(data.length + "b");
   p.appendChild(t);
-
   document.getElementById("stats").appendChild(p)
+
+  var label = ""
+
+  for(var common in commons) {
+    label += common + "["+commons[common]+"] "
+  }
+
+  p = document.createElement("P")
+  t = document.createTextNode(label);
+  p.appendChild(t);
+  document.getElementById("stats").appendChild(p)
+}
+
+function uniques() {
+  var un = []
+  data.forEach(function(c) {
+    if(un[c] == undefined) un[c] = 1
+    else un[c]++
+  })
+
+  commons = un
 }
